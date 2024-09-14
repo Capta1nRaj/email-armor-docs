@@ -1,0 +1,7 @@
+{
+    "title": "Session Management",
+    "pages": [
+        "local-session-check",
+        "server-session-check"
+    ]
+}

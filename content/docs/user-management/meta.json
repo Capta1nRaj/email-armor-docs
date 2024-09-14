@@ -1,0 +1,8 @@
+{
+    "title": "User Managment",
+    "pages": [
+        "signup",
+        "signin",
+        "two-step-verification"
+    ]
+}

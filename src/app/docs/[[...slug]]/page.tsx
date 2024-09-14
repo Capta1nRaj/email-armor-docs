@@ -1,11 +1,6 @@
 import { source } from '@/app/source';
 import type { Metadata } from 'next';
-import {
-    DocsPage,
-    DocsBody,
-    DocsDescription,
-    DocsTitle,
-} from 'fumadocs-ui/page';
+import { DocsPage, DocsBody, DocsDescription, DocsTitle, } from 'fumadocs-ui/page';
 import { notFound } from 'next/navigation';
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 

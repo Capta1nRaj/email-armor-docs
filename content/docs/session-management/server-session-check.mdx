@@ -1,0 +1,50 @@
+---
+title: "Server Session Validation"
+description: "Integrate the server session check function from the Email Armor module to ensure secure session validation."
+---
+
+# Brief
+
+The `serverSessionCheck` function provides an extra layer of security by validating the session through the database, along with verifying the JWT token and user agent. This comprehensive approach ensures a more secure and reliable session validation process.
+
+## Configuration for `serverSessionCheck` Function
+
+### 1. Integration
+
+To integrate the `serverSessionCheck` function, follow the steps below:
+
+```js
+// Retrieve headers for session verification
+const headersList = headers();
+const id = headersList.get('id');
+const username = headersList.get('userName');
+const jwtToken = headersList.get('token');
+
+// Verify the session 
+const response = await serverSessionCheck(username, id, jwtToken, userAgent);
+// userAgent refers to the user's browser, device, or other identifying information.
+```
+
+### 2. Error Responses
+
+| Status | Message                                                                                                       |
+|--------|---------------------------------------------------------------------------------------------------------------|
+| `400`  | Session doesn't exist.                                                                                        |
+| `401`  | Your device is unauthorized.                                                                                  |
+| `500`  | An unexpected error occurred. Please report this issue at [GitHub](https://github.com/Capta1nRaj/email-armor).|
+
+### 3. Success Response
+
+A `202` response indicates that the session is valid. The response will include the following details:
+
+```js
+{
+    userName: priyalraj, 
+    message: "Session exists.",
+    status: 202
+};
+```
+
+## Next Steps: Implementing the Reset Password Feature
+
+With server session validation now in place, the next step is to set up a secure `reset password` feature. This will allow users to reset their passwords, utilizing session checks and email-based authentication for added security and protection.

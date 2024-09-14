@@ -1,0 +1,76 @@
+---
+title: Sign Up
+description: Let's start integrating the sign-up function from the Email Armor module into your project to provide secure and efficient user onboarding.
+---
+
+## Configuration for `signUp` function
+
+### 1. Integration
+
+To start, integrate the `signUp` function from the **Email Armor** module within your API file as shown below:
+
+```js
+import { signUp } from 'email-armor';
+const response = await signUp(fullName, username, email, password, referralCode, userAgent, userRole);
+```
+
+### 2. Brief Description of Each Field
+
+| Field Name    | Description                                                             |
+|---------------|-------------------------------------------------------------------------|
+| `fullName`    | Full name of the user                                                   |
+| `username`    | Username provided by the user                                           |
+| `email`       | Email address of the user                                               |
+| `password`    | User password (minimum length of 8 characters)                          |
+| `referralCode`| Referral code, or pass an empty string (`""`) if not available          |
+| `userAgent`   | Name of the user's agent (e.g., browser, device, etc.)                  |
+| `userRole`    | User role, or pass an empty string (`""`) if none                       |
+
+### 3. Error Responses
+
+| Status | Message                                                                                                       |
+|--------|---------------------------------------------------------------------------------------------------------------|
+| `206`  | Min. Password Length Must Be Greater Than 8.                                                                  |
+| `400`  | Invalid Fullname!                                                                                             |
+| `400`  | Invalid username!                                                                                             |
+| `400`  | Invalid Email!                                                                                                |
+| `400`  | Username already exists!                                                                                      |
+| `400`  | Email already exists!                                                                                         |
+| `400`  | Wrong Referral Code!                                                                                          |
+| `401`  | Your device is unauthorized.                                                                                  |
+| `500`  | An unexpected error occurred. Please report this issue at [GitHub](https://github.com/Capta1nRaj/email-armor) |
+
+
+### 4. Success Response
+
+Upon a successful account creation, you'll receive a `202` response along with the following details:
+
+```js
+{
+  id: new ObjectId('66e0fe542c1e3dc4dcb3eb01'),
+  userName: 'priyalraj',
+  signedJWTToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InByaXlhbHJhajk5IiwidXNlckFnZW50IjoiJDJiJDEwJExSbVFpMm11Y1RUcjlGYy9YNUpRU09sYWFNWC91eXRucEtmR2Nid0FiOFFZR3hGd3hFZEFLIiwiaWF0IjoxNzI2MDIxMjA0LCJleHAiOjE3NTc1NTcyMDR9.w-trwD9Sim4Wuqad9S8ufwGFR46fmhrlcH8gRo6tn-E',
+  message: 'Account created successfully!',
+  status: 202
+}
+```
+
+### 5. Storing Cookies
+
+Once you receive the `202` response, store the `id`, `userName`, and `signedJWTToken` in cookies. Below is an example of how to store these values using Next.js.
+
+> **Note:** You can use any method of cookie storage depending upon your tech stack.
+
+```js
+const expireIn365Days = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+
+// Set cookies for user data: userName, id, and JWT token (expires in 365 days)
+cookies().set("userName", userName, { path: "/", domain: process.env.COOKIE_DOMAIN || "localhost", expires: expireIn365Days });
+cookies().set("id", response.id, { path: "/", domain: process.env.COOKIE_DOMAIN || "localhost", expires: expireIn365Days });
+//@ts-expect-error: Ignore TypeScript error for setting signedJWTToken cookie
+cookies().set("token", response.signedJWTToken, { path: "/", domain: process.env.COOKIE_DOMAIN || "localhost", expires: expireIn365Days });
+```
+
+## Configuring the `signIn` Module
+
+Once the `signUp` module is set up, proceed to configure the `signIn` module for user authentication and login functionality.

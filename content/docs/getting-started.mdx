@@ -1,0 +1,77 @@
+---
+title: Getting Started
+description: Setting up Email Armor in your Next.js/Node.js Project
+---
+
+## 1. Install the package
+
+To install the **Email Armor** package, run the following command in your terminal:
+
+```bash
+npm i email-armor
+```
+
+## 2. Configure your .env file with the following values
+
+Add the following key-value pairs to your **.env** file to set up the required environment variables:
+
+```js
+// MongoDB Connection
+MONGODB_URI = mongodb://127.0.0.1:27017/databaseName
+
+// Nodemailer Configuration
+NODEMAILER_USERNAME = your_email@gmail.com
+NODEMAILER_PASSWORD = your_gmail_app_password
+NODEMAILER_MAIL_FROM = "Subject + sender_email@example.com"
+
+// Security and Authentication
+BCRYPT_SALT_ROUNDS = 10
+JWT_TOKEN_VALUE = your_256_bit_secret
+EXPIRE_JWT_TOKEN = token_expiration_time
+
+// Cookie Settings (For Subdomain Redirection)
+COOKIE_DOMAIN = localhost
+```
+
+- [Ref. for BCRYPT_SALT_ROUNDS](https://www.npmjs.com/package/bcrypt#a-note-on-rounds)
+- [Ref. for EXPIRE_JWT_TOKEN](https://github.com/vercel/ms)
+
+### Sample .env
+```js
+MONGODB_URI = mongodb://127.0.0.1:27017/email-armor-demo
+NODEMAILER_USERNAME = priyalraj@gmail.com
+NODEMAILER_PASSWORD = thisisntrealpass
+NODEMAILER_MAIL_FROM = Email Armor <priyalraj@gmail.com>
+BCRYPT_SALT_ROUNDS = 10
+JWT_TOKEN_VALUE = use-your-own-please
+EXPIRE_JWT_TOKEN = 30d
+
+// If your domain is https://priyalraj.com, set the cookie domain as shown below.
+COOKIE_DOMAIN = .priyalraj.com
+```
+
+## 3. Generate/Update the configuration file
+
+Run the following command to generate necessary configuration files:
+
+```bash
+npx email-armor init
+```
+
+- This will create two files: email-armor.json and email-template.html. You will be prompted to generate [schema/model](https://github.com/Capta1nRaj/email-armor/tree/main/models) files. Press Y to generate them or N to skip, then press Enter.
+
+Once the files are generated, you can customize your email template by editing **email-template.html**.
+
+> **Note**: Currently, only inline CSS is supported for email templates. You can use tools like GPT to help create more advanced templates if needed.
+
+- You can also configure values such as the **Forgot Password title, referral points, and OTP limits** within email-armor.json.
+
+After making any changes to email-armor.json or email-template.html, apply the updates by running:
+
+```bash
+npx email-armor init
+```
+
+## Integrating the Sign-Up Process to onboard users
+
+- With the setup complete, you're ready to integrate the sign-up process and start onboarding users securely into your application.

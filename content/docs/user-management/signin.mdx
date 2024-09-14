@@ -1,0 +1,100 @@
+---
+title: "Sign In"
+description: "Let's start integrating the signIn function from the Email Armor module into your project for secure user authentication."
+---
+
+## Configuring the `signIn` function
+
+### 1. Integration (POST Request)
+
+To set up the **signIn** function within your API file, follow the steps below:
+
+```js
+// Import the signIn function from the Email Armor module
+import { signIn } from 'email-armor';
+
+// Initialize the response object
+let response = { id: "", userName: "", signedJWTToken: "", message: "", status: 0 };
+
+// Check if the input is an email or a username
+if (userNameOrEmail.includes('@')) {
+    // If it's an email, call signIn with the email
+    const signInResponse = await signIn(userNameOrEmail, '', userPassword, userAgent, userIP);
+    // userAgent = Name of the user's agent (e.g., browser, device, etc.)
+    response = {
+        id: signInResponse.id || "",
+        userName: signInResponse.userName || "",
+        signedJWTToken: signInResponse.signedJWTToken || "",
+        message: signInResponse.message || "",
+        status: signInResponse.status
+    };
+} else {
+    // If it's a username, call signIn with the username
+    const signInResponse = await signIn('', userNameOrEmail, userPassword, userAgent, userIP);
+    // userAgent = Name of the user's agent (e.g., browser, device, etc.)
+    response = {
+        id: signInResponse.id || "",
+        userName: signInResponse.userName || "",
+        signedJWTToken: signInResponse.signedJWTToken || "",
+        message: signInResponse.message || "",
+        status: signInResponse.status
+    };
+}
+```
+
+> **Note**: Feel free to use your own method of input handling. Just ensure that if you pass an email, you do not pass the `username`, and vice versa.
+
+### 2. Error Responses
+
+| Status | Message                                                                                                       |
+|--------|---------------------------------------------------------------------------------------------------------------|
+| `400`  | Either userName or userEmail must be provided!                                                                |
+| `400`  | Invalid userName!                                                                                             |
+| `400`  | Invalid Email!                                                                                                |
+| `400`  | Please Validate Your Details.                                                                                 |
+| `401`  | Your device is unauthorized.                                                                                  |
+| `500`  | An unexpected error occurred. Please report this issue at [GitHub](https://github.com/Capta1nRaj/email-armor) |
+
+
+### 3. Success Response
+
+Once you get a `202` response, it means the login was successful. The response will include the following details:
+
+```js
+{
+  id: new ObjectId('66e0fe542c1e3dc4dcb3eb01'),
+  userName: 'priyalraj',
+  signedJWTToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InByaXlhbHJhajk5IiwidXNlckFnZW50IjoiJDJiJDEwJExSbVFpMm11Y1RUcjlGYy9YNUpRU09sYWFNWC91eXRucEtmR2Nid0FiOFFZR3hGd3hFZEFLIiwiaWF0IjoxNzI2MDIxMjA0LCJleHAiOjE3NTc1NTcyMDR9.w-trwD9Sim4Wuqad9S8ufwGFR46fmhrlcH8gRo6tn-E',
+  message: 'Login Successful!',
+  status: 202
+}
+```
+
+> **Note**: If the user has enabled **2FA (Two-Factor Authentication)**, a `201` response will be received with an empty `signedJWTToken` (`""`). Please refer to the [following guidelines](/docs/user-management/two-step-verification) to complete the two-step verification setup. You should still save the cookies for `id` and `userName`, but the `token` will remain an empty string (`""`).
+
+Here is a sample of the response when **2FA** is enabled:
+
+```js
+{
+  id: new ObjectId('66e0fe542c1e3dc4dcb3eb01'),
+  userName: 'priyalraj',
+  signedJWTToken: '',
+  message: 'Login Successful!',
+  status: 201
+}
+```
+
+### 4. Storing Cookies
+
+After receiving the `202` response, you should store the `id`, `userName`, and `signedJWTToken` in cookies. Below is an example of how to store these values using Next.js:
+
+> **Note:** You can use any method of cookie storage depending upon your tech stack.
+
+```js
+const expireIn365Days = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+
+// Set cookies (id, userName, and token) with a 365-day expiration.
+cookies().set("id", id, { path: "/", domain: `${process.env.COOKIE_DOMAIN || "localhost"}`, expires: expireIn365Days });
+cookies().set("userName", userName, { path: "/", domain: `${process.env.COOKIE_DOMAIN || "localhost"}`, expires: expireIn365Days });
+cookies().set("token", signedJWTToken, { path: "/", domain: `${process.env.COOKIE_DOMAIN || "localhost"}`, expires: expireIn365Days });
+```

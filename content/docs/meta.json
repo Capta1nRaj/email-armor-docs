@@ -1,0 +1,10 @@
+{
+    "title": "",
+    "pages": [
+        "index",
+        "getting-started",
+        "user-management",
+        "session-management",
+        "password-management"
+    ]
+}

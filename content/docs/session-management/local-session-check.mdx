@@ -1,0 +1,48 @@
+---
+title: "Local Session Validation"
+description: "Let's integrate the local session check function from the Email Armor module to validate a session quickly and efficiently."
+---
+
+# Brief
+
+The `localSessionCheck` function verifies whether a JWT token is valid on the server side without requiring database validation, speeding up the session validation process.
+
+## Configuration for `localSessionCheck` Function
+
+### 1. Integration
+
+```js
+// Fetch headers for verification
+const headersList = headers();
+const username = headersList.get('userName');
+const jwtToken = headersList.get('token');
+
+// Verify the session
+const response = await localSessionCheck(username, jwtToken, userAgent);
+// userAgent = Name of the user's agent (e.g., browser, device, etc.)
+```
+
+### 2. Error Responses
+
+| Status | Message                                                                                                       |
+|--------|---------------------------------------------------------------------------------------------------------------|
+| `202`  | Session exists.                                                                                               |
+| `400`  | Session doesn't exist.                                                                                        |
+| `401`  | Your device is unauthorized.                                                                                  |
+| `500`  | An unexpected error occurred. Please report this issue at [GitHub](https://github.com/Capta1nRaj/email-armor).|
+
+### 3. Success Response
+
+When you receive a `202` response, it means the session exists. The response will include the following details:
+
+```js
+{
+    userName: priyalraj, 
+    message: "Session exists.",
+    status: 202
+};
+```
+
+## Final Step: Configuring the Server Session Check Function
+
+We've covered how to integrate `localSessionCheck` for quick JWT token validation. Now, it's time to implement the more comprehensive `serverSessionCheck`, which performs a deeper validation by checking session data against the database. This robust method is ideal for critical API operations that require a higher level of security and thorough session verification.

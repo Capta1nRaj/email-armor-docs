@@ -1,0 +1,98 @@
+---
+title: Two-Step Verification
+description: Learn how to integrate the two-step verification feature into your project to enhance security during user sign-up and login.
+---
+
+# Why Use Two-Factor Authentication (2FA)?
+
+Two-step verification (2FA) provides an added layer of security by requiring users to verify their identity using a one-time password (OTP) sent to their registered email. This guide will show you how to configure the `signInVerify` function to implement secure user authentication.
+
+## Configuring the 2FA Function
+
+### 1. Integration (PUT Request)
+
+When the user receives a `201` response, display the OTP input screen as demonstrated in our [SDK](https://github.com/Capta1nRaj/email-armor-demo). After capturing the OTP from the user, send the following request to your backend:
+
+```js
+import { signInVerify } from 'email-armor';
+
+const response = await signInVerify(id, OTP, userAgent, 'verify', '');
+// Retrieve 'id' from cookies
+// `userAgent` is the name of the user's agent (e.g., browser, device, etc.)
+```
+
+### 2. Error Responses
+
+| **Status Code** | **Message**                                                                                                       |
+|-----------------|-------------------------------------------------------------------------------------------------------------------|
+| `400`           | Invalid OTP!                                                                                                      |
+| `400`           | Invalid request method!                                                                                           |
+| `401`           | Your device is unauthorized.                                                                                      |
+| `404`           | Session not found.                                                                                                |
+| `500`           | An unexpected error occurred. Please report this issue at [GitHub](https://github.com/Capta1nRaj/email-armor).    |
+
+### 3. Success Response
+
+Once you get a `202` response, it means the login was successful. The response will include the following details:
+
+```js
+{ 
+    signedJWTToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InByaXlhbHJhajk5IiwidXNlckFnZW50IjoiJDJiJDEwJExSbVFpMm11Y1RUcjlGYy9YNUpRU09sYWFNWC91eXRucEtmR2Nid0FiOFFZR3hGd3hFZEFLIiwiaWF0IjoxNzI2MDIxMjA0LCJleHAiOjE3NTc1NTcyMDR9.w-trwD9Sim4Wuqad9S8ufwGFR46fmhrlcH8gRo6tn-E", 
+    message: "Login Successful!", 
+    status: 202 
+};
+```
+
+### 4. Storing Cookies
+
+After receiving the `202` response, you should store the signedJWTToken in cookies. Below is an example of how to store these values using Next.js:
+
+```js
+const expireIn365Days = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+
+// Set cookie token with a 365-day expiration.
+cookies().set("token", signedJWTToken, { path: "/", domain: `${process.env.COOKIE_DOMAIN || "localhost"}`, expires: expireIn365Days });
+```
+
+> **Note:** You can use any method of cookie storage depending upon your tech stack.
+
+## Resend OTP
+
+If the user hasn't received the OTP or needs to resend it, use the following steps to handle the OTP resend.
+
+### 1. Integration (PATCH Request)
+
+```js
+import { signInVerify } from 'email-armor';
+
+const response = await signInVerify(id, 'NM85jm', userAgent, 'resend', userIP);
+// Retrieve 'id' from cookies
+// `userAgent` is the name of the user's agent (e.g., browser, device, etc.)
+```
+
+
+### 2. Error Responses
+
+| **Status Code** | **Message**                                                                                                       |
+|-----------------|-------------------------------------------------------------------------------------------------------------------|
+| `400`           | Invalid request method!                                                                                           |
+| `400`           | You have exceeded the maximum number of OTP resend attempts.                                                      |
+| `401`           | Your device is unauthorized.                                                                                      |
+| `404`           | Session not found.                                                                                                |
+| `500`           | An unexpected error occurred. Please report this issue at [GitHub](https://github.com/Capta1nRaj/email-armor).    |
+
+### 3. Success Response
+
+A successful resend request will return a `200` status code and the following response:
+
+```js
+{ 
+    signedJWTToken: "", 
+    message: "OTP has been resent to your email!", 
+    status: 200 
+};
+```
+
+## Configuring the Session Check Function
+
+Once the `signIn` module is set up, the next step is to integrate the **session check function** to verify user sessions and ensure authenticated users have valid sessions during their interactions with your application.

@@ -7,7 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "fumadocs-mdx"
+    "postinstall": "fumadocs-mdx",
+    "devSync": "git checkout v1.0.0 && git reset --hard origin/main && git push --force && git pull origin main && git push",
+    "mainSync": "git checkout main && git pull origin v1.0.0 && git push && git checkout v1.0.0",
+    "devSoftReset": "git checkout v1.0.0 && git reset --soft HEAD~2 && git commit -m \"Tested successfully with version v1.0.0\" && git push --force",
+    "mainSoftReset": "git checkout main && git reset --soft HEAD~2 && git commit -m \"MicrosoftClarity code updated\" && git push --force && git checkout v1.0.0 && git reset --hard origin/main && git push --force",
+    "devHardReset": "git checkout v1.0.0 && git reset --hard origin/main && git push --force && git pull origin main && git push",
+    "mainHardReset": "git checkout main && git reset --hard origin/v1.0.0 && git push --force && git checkout v1.0.0",
+    "devVercel": "git checkout v1.0.0 && vercel --force && git checkout v1.0.0",
+    "mainVercel": "git checkout main && vercel --force --prod && git checkout v1.0.0"
   },
   "dependencies": {
     "@types/mdx": "^2.0.13",
